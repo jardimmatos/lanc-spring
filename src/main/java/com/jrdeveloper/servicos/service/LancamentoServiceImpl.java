@@ -3,6 +3,7 @@ package com.jrdeveloper.servicos.service;
 import com.jrdeveloper.servicos.exceptions.RegraNegocioException;
 import com.jrdeveloper.servicos.model.entity.Lancamento;
 import com.jrdeveloper.servicos.model.enums.StatusLancamento;
+import com.jrdeveloper.servicos.model.enums.TipoLancamento;
 import com.jrdeveloper.servicos.model.repository.LancamentoRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService{
@@ -19,6 +21,7 @@ public class LancamentoServiceImpl implements LancamentoService{
     private LancamentoRepository repository;
 
     public LancamentoServiceImpl(LancamentoRepository repository) {
+        super();
         this.repository = repository;
     }
 
@@ -54,11 +57,10 @@ public class LancamentoServiceImpl implements LancamentoService{
                                         .matching()
                                         .withIgnoreCase()
                                         .withStringMatcher(
-                                                ExampleMatcher.StringMatcher.CONTAINING
+                                            ExampleMatcher.StringMatcher.CONTAINING
                                         )
                                     );
-        repository.findAll(example);
-        return null;
+        return repository.findAll(example);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class LancamentoServiceImpl implements LancamentoService{
             throw new RegraNegocioException("Informe uma descrição válida!");
         }
 
-        if(lancamento.getMes() == null || lancamento.getMes() < 1 || lancamento.getMes() > 1){
+        if(lancamento.getMes() == null || lancamento.getMes() < 1 || lancamento.getMes() > 12){
             throw new RegraNegocioException("Informe um mês válido!");
         }
 
@@ -93,6 +95,22 @@ public class LancamentoServiceImpl implements LancamentoService{
             throw new RegraNegocioException("Informe um tipo de lançamento!");
         }
 
+    }
+
+    @Override
+    public Optional<Lancamento> obterPorId(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal obterSaldoUsuario(Long id) {
+        BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.RECEITA);
+        BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.DESPESA);
+
+        if (receitas == null) receitas = BigDecimal.ZERO;
+        if (despesas == null) despesas = BigDecimal.ZERO;
+        return receitas.subtract(despesas);
     }
 
 
