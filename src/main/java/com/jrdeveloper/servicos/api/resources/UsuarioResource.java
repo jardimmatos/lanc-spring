@@ -48,8 +48,8 @@ public class UsuarioResource {
     @PostMapping("autenticar")
     public ResponseEntity autenticar(@RequestBody UsuarioDTO dto){
         try{
-            Usuario usuatioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
-            return ResponseEntity.ok(usuatioAutenticado);
+            Usuario usuarioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
+            return ResponseEntity.ok(usuarioAutenticado);
         }catch(ErroAutenticacaoException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

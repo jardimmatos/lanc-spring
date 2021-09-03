@@ -4,6 +4,7 @@ import com.jrdeveloper.servicos.exceptions.ErroAutenticacaoException;
 import com.jrdeveloper.servicos.exceptions.RegraNegocioException;
 import com.jrdeveloper.servicos.model.entity.Usuario;
 import com.jrdeveloper.servicos.model.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public Usuario autenticar(String email, String senha) {
-        Optional<Usuario> usuario =repository.findByEmail(email);
+        Optional<Usuario> usuario = repository.findByEmail(email);
         if(!usuario.isPresent()){
             throw new ErroAutenticacaoException("Usuário não encontrado para o e-mail informado!");
         }
