@@ -22,7 +22,7 @@ import java.util.Optional;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //evita alteração na configuração do banco de dados do arquivo application.properties
 @ActiveProfiles("test") // automaticamente vai carregar o arquivo application-"test".properties
-public class LancementoRepositoryTest {
+public class LancamentoRepositoryTest {
 
     @Autowired
     LancamentoRepository repository;
